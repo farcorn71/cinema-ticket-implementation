@@ -1,8 +1,7 @@
 import TicketService from '../src/pairtest/TicketService.js';
 import TicketTypeRequest from '../src/pairtest/lib/TicketTypeRequest.js';
 import InvalidPurchaseException from '../src/pairtest/lib/InvalidPurchaseException.js';
-import TicketPaymentService from '../src/thirdparty/paymentgateway/TicketPaymentService.js';
-import SeatReservationService from '../src/thirdparty/seatbooking/SeatReservationService.js';
+import { jest, describe, test, beforeEach, expect } from '@jest/globals';
 
 describe('TicketService', () => {
   let ticketService;
@@ -10,7 +9,6 @@ describe('TicketService', () => {
   let mockSeatReservationService;
 
   beforeEach(() => {
-    // Create mock services
     mockPaymentService = {
       makePayment: jest.fn(),
     };
@@ -28,7 +26,7 @@ describe('TicketService', () => {
 
       ticketService.purchaseTickets(accountId, adultTickets);
 
-      expect(mockPaymentService.makePayment).toHaveBeenCalledWith(accountId, 75); // 3 * £25
+      expect(mockPaymentService.makePayment).toHaveBeenCalledWith(accountId, 75);
       expect(mockSeatReservationService.reserveSeat).toHaveBeenCalledWith(accountId, 3);
     });
 
@@ -39,8 +37,8 @@ describe('TicketService', () => {
 
       ticketService.purchaseTickets(accountId, adultTickets, childTickets);
 
-      expect(mockPaymentService.makePayment).toHaveBeenCalledWith(accountId, 95); // (2 * £25) + (3 * £15)
-      expect(mockSeatReservationService.reserveSeat).toHaveBeenCalledWith(accountId, 5); // 2 adults + 3 children
+      expect(mockPaymentService.makePayment).toHaveBeenCalledWith(accountId, 95);
+      expect(mockSeatReservationService.reserveSeat).toHaveBeenCalledWith(accountId, 5);
     });
 
     test('should successfully purchase adult, child, and infant tickets', () => {
@@ -51,8 +49,8 @@ describe('TicketService', () => {
 
       ticketService.purchaseTickets(accountId, adultTickets, childTickets, infantTickets);
 
-      expect(mockPaymentService.makePayment).toHaveBeenCalledWith(accountId, 80); // (2 * £25) + (2 * £15) + (1 * £0)
-      expect(mockSeatReservationService.reserveSeat).toHaveBeenCalledWith(accountId, 4); // 2 adults + 2 children (no seat for infant)
+      expect(mockPaymentService.makePayment).toHaveBeenCalledWith(accountId, 80);
+      expect(mockSeatReservationService.reserveSeat).toHaveBeenCalledWith(accountId, 4);
     });
 
     test('should successfully purchase adult and infant tickets', () => {
@@ -62,8 +60,8 @@ describe('TicketService', () => {
 
       ticketService.purchaseTickets(accountId, adultTickets, infantTickets);
 
-      expect(mockPaymentService.makePayment).toHaveBeenCalledWith(accountId, 50); // (2 * £25) + (2 * £0)
-      expect(mockSeatReservationService.reserveSeat).toHaveBeenCalledWith(accountId, 2); // 2 adults only
+      expect(mockPaymentService.makePayment).toHaveBeenCalledWith(accountId, 50);
+      expect(mockSeatReservationService.reserveSeat).toHaveBeenCalledWith(accountId, 2);
     });
 
     test('should handle maximum of 25 tickets', () => {
@@ -72,7 +70,7 @@ describe('TicketService', () => {
 
       ticketService.purchaseTickets(accountId, adultTickets);
 
-      expect(mockPaymentService.makePayment).toHaveBeenCalledWith(accountId, 625); // 25 * £25
+      expect(mockPaymentService.makePayment).toHaveBeenCalledWith(accountId, 625);
       expect(mockSeatReservationService.reserveSeat).toHaveBeenCalledWith(accountId, 25);
     });
 
@@ -84,8 +82,8 @@ describe('TicketService', () => {
 
       ticketService.purchaseTickets(accountId, adultTickets, childTickets, infantTickets);
 
-      expect(mockPaymentService.makePayment).toHaveBeenCalledWith(accountId, 400); // (10 * £25) + (10 * £15)
-      expect(mockSeatReservationService.reserveSeat).toHaveBeenCalledWith(accountId, 20); // 10 adults + 10 children
+      expect(mockPaymentService.makePayment).toHaveBeenCalledWith(accountId, 400);
+      expect(mockSeatReservationService.reserveSeat).toHaveBeenCalledWith(accountId, 20);
     });
 
     test('should handle multiple ticket requests of the same type', () => {
@@ -96,7 +94,7 @@ describe('TicketService', () => {
 
       ticketService.purchaseTickets(accountId, adultTickets1, adultTickets2, childTickets);
 
-      expect(mockPaymentService.makePayment).toHaveBeenCalledWith(accountId, 140); // (5 * £25) + (1 * £15)
+      expect(mockPaymentService.makePayment).toHaveBeenCalledWith(accountId, 140);
       expect(mockSeatReservationService.reserveSeat).toHaveBeenCalledWith(accountId, 6);
     });
   });
@@ -277,7 +275,6 @@ describe('TicketService', () => {
 
       ticketService.purchaseTickets(accountId, adultTickets, childTickets, infantTickets);
 
-      // (3 * £25) + (2 * £15) + (1 * £0) = £105
       expect(mockPaymentService.makePayment).toHaveBeenCalledWith(accountId, 105);
       expect(mockPaymentService.makePayment).toHaveBeenCalledTimes(1);
     });
@@ -290,7 +287,6 @@ describe('TicketService', () => {
 
       ticketService.purchaseTickets(accountId, adultTickets, childTickets, infantTickets);
 
-      // 4 adults + 3 children = 7 seats (infants don't get seats)
       expect(mockSeatReservationService.reserveSeat).toHaveBeenCalledWith(accountId, 7);
       expect(mockSeatReservationService.reserveSeat).toHaveBeenCalledTimes(1);
     });
@@ -302,7 +298,6 @@ describe('TicketService', () => {
 
       ticketService.purchaseTickets(accountId, adultTickets, infantTickets);
 
-      // Only 5 seats for adults, 0 for infants
       expect(mockSeatReservationService.reserveSeat).toHaveBeenCalledWith(accountId, 5);
     });
 
@@ -313,7 +308,6 @@ describe('TicketService', () => {
 
       ticketService.purchaseTickets(accountId, adultTickets, infantTickets);
 
-      // (1 * £25) + (1 * £0) = £25
       expect(mockPaymentService.makePayment).toHaveBeenCalledWith(accountId, 25);
     });
   });
@@ -337,9 +331,8 @@ describe('TicketService', () => {
 
       ticketService.purchaseTickets(accountId, adultTickets, childTickets, infantTickets);
 
-      // (13 * £25) + (7 * £15) + (5 * £0) = £430
       expect(mockPaymentService.makePayment).toHaveBeenCalledWith(accountId, 430);
-      // 13 + 7 = 20 seats
+
       expect(mockSeatReservationService.reserveSeat).toHaveBeenCalledWith(accountId, 20);
     });
 
@@ -351,7 +344,7 @@ describe('TicketService', () => {
 
       ticketService.purchaseTickets(accountId, adultTickets1, adultTickets2, adultTickets3);
 
-      expect(mockPaymentService.makePayment).toHaveBeenCalledWith(accountId, 75); // 3 * £25
+      expect(mockPaymentService.makePayment).toHaveBeenCalledWith(accountId, 75);
       expect(mockSeatReservationService.reserveSeat).toHaveBeenCalledWith(accountId, 3);
     });
   });
@@ -361,7 +354,6 @@ describe('TicketService', () => {
       const service = new TicketService();
       const adultTickets = new TicketTypeRequest('ADULT', 1);
 
-      // Should not throw error
       expect(() => {
         service.purchaseTickets(1, adultTickets);
       }).not.toThrow();

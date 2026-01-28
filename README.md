@@ -109,55 +109,6 @@ npm run test:coverage
 npm run test:watch
 ```
 
-## Usage
-
-### Basic Example
-
-```javascript
-import TicketService from './src/pairtest/TicketService.js';
-import TicketTypeRequest from './src/pairtest/lib/TicketTypeRequest.js';
-
-const ticketService = new TicketService();
-
-// Purchase 2 adult and 3 child tickets
-const adultTickets = new TicketTypeRequest('ADULT', 2);
-const childTickets = new TicketTypeRequest('CHILD', 3);
-
-try {
-  ticketService.purchaseTickets(123, adultTickets, childTickets);
-  console.log('Purchase successful!');
-} catch (error) {
-  console.error('Purchase failed:', error.message);
-}
-```
-
-### Advanced Example
-
-```javascript
-// Purchase with all ticket types
-const adultTickets = new TicketTypeRequest('ADULT', 3);
-const childTickets = new TicketTypeRequest('CHILD', 2);
-const infantTickets = new TicketTypeRequest('INFANT', 2);
-
-ticketService.purchaseTickets(456, adultTickets, childTickets, infantTickets);
-
-// Expected payment: (3 × £25) + (2 × £15) + (2 × £0) = £105
-// Expected seats: 3 + 2 = 5 seats (infants don't get seats)
-```
-
-### Custom Service Injection
-
-```javascript
-import TicketPaymentService from './src/thirdparty/paymentgateway/TicketPaymentService.js';
-import SeatReservationService from './src/thirdparty/seatbooking/SeatReservationService.js';
-
-// Use custom service implementations
-const paymentService = new TicketPaymentService();
-const seatService = new SeatReservationService();
-
-const ticketService = new TicketService(paymentService, seatService);
-```
-
 ## Testing
 
 The implementation includes comprehensive test coverage:
@@ -225,59 +176,10 @@ PASS  test/TicketService.test.js
       ...
 ```
 
-## Error Handling
-
-All errors are thrown as `InvalidPurchaseException` with descriptive messages:
-
-| Error Scenario | Error Message |
-|----------------|---------------|
-| Invalid account ID | "Account ID must be a positive integer" |
-| No tickets requested | "At least one ticket type request must be provided" |
-| Invalid request object | "Invalid ticket type request" |
-| Zero tickets | "Number of tickets must be greater than zero" |
-| Too many tickets | "Cannot purchase more than 25 tickets at a time" |
-| No adult ticket | "Child and Infant tickets cannot be purchased without at least one Adult ticket" |
-| Too many infants | "Number of Infant tickets cannot exceed the number of Adult tickets (Infants sit on Adult laps)" |
-
-## Code Quality
-
-### Coding Standards
-- ES6+ module syntax
-- Private class fields using `#` prefix
-- Descriptive variable and method names
-- Comprehensive JSDoc comments
-- Consistent code formatting
-
-### Best Practices
-- Single Responsibility Principle
-- Dependency Injection
-- Comprehensive error handling
-- Extensive test coverage
-- Clear separation of concerns
-
-## Constraints
-
-The following constraints were adhered to:
-- ✅ The `TicketService` interface was not modified
-- ✅ Code in `thirdparty.*` packages was not modified
-- ✅ `TicketTypeRequest` is implemented as an immutable object
-
-## Future Enhancements
-
-Potential improvements for future iterations:
-1. Add logging for audit trails
-2. Implement transaction rollback on payment failure
-3. Add support for discount codes or promotions
-4. Implement tiered pricing (e.g., matinee discounts)
-5. Add support for different seating categories (VIP, standard, etc.)
-6. Implement booking confirmation system
-7. Add support for group bookings with special rules
-
 ## License
 
 This is a coding exercise project.
 
 ## Author
 
-Cornelius Okonkwo
-Lead Software Engineer
+Cornelius
